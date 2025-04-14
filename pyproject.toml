@@ -1,0 +1,10 @@
+[project]
+name = "break-away"
+version = "0.1"
+description = "A simple brick breaker game"
+authors = [
+    {name="Stephen Naragon", email="snaragon@my.wctc.edu"}
+]
+maintainers = [
+    {name="Stephen Naragon", email="snaragon@my.wctc.edu"}
+]
