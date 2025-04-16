@@ -1,11 +1,19 @@
+import math
+import random
 import pygame
-from pygame.examples.music_drop_fade import play_file
+pygame.font.init()
+# Set Text font on screen
+font = pygame.font.SysFont(None, 48)
+lives_font = pygame.font.SysFont(None, 24)
 
 import game_settings
 
 class Ball(pygame.sprite.Sprite):
     def __init__(self, surface, x, y):
         pygame.sprite.Sprite.__init__(self)
+        self.game_started = False
+        ## Number of lives for the game
+        self.lives = game_settings.lives
 
         self.surface = surface
         self.radius = 10
@@ -20,7 +28,9 @@ class Ball(pygame.sprite.Sprite):
 
 
         # Create our vectors
-        self.position = pygame.Vector2(x,y)
+        self.start_x = x
+        self.start_y = y
+        self.position = pygame.Vector2(self.start_x,self.start_y)
         self.velocity = pygame.Vector2(0,0)
 
         # Set up our speed variables
@@ -39,8 +49,10 @@ class Ball(pygame.sprite.Sprite):
     def update(self):
         self.update_velocity()
         self.update_position()
+        self.print_lives()
 
         self.rect.center = self.position
+
 
     # Run every update
     def update_position(self):
@@ -60,11 +72,17 @@ class Ball(pygame.sprite.Sprite):
             if self.rect.top <= self.surface.get_rect().top:
                 self.position.y = self.surface.get_rect().top + self.rect.height / 2 + 1
 
-        # Kill the ball if it goes off the bottom
+        # Lower play lives if ball goes off bottom and end the game if player is out of lives
         if self.rect.top >= self.surface.get_rect().bottom:
-            self.kill()
-            # ADD NEW BALL SPAWN, LOWER PLAYERS LIFE COUNT
-
+            ## If the ball goes under, decrement the lives
+            self.lives -= 1
+            self.game_started = False
+            self.listen_to_start()
+            self.position = pygame.Vector2(self.start_x, self.start_y)
+            self.velocity = pygame.Vector2(0, 0)
+            # If out of lives, end the game
+            if self.lives == 0:
+                self.kill()
 
         self.position += self.velocity
 
@@ -77,10 +95,19 @@ class Ball(pygame.sprite.Sprite):
 
     def listen_to_start(self):
         keys = pygame.key.get_pressed()
+        ## Start font (2.5 Points)
+        if not self.game_started:
+            text = font.render("Press SPACE to Start!", True, (255, 255, 255))
+            text_rect = text.get_rect(center=(self.surface.get_width() // 2, self.surface.get_height() // 1.5))
+            self.surface.blit(text, text_rect)
         if keys[pygame.K_SPACE]:
-            self.velocity.x = 1
-            self.velocity.y = 1
-            self.angle = 45
+            self.game_started = True
+            ## Randomized ball start (5 points)
+            random_angle = random.randint(10,80)
+            radians = math.radians(random_angle)
+            self.velocity.x = math.cos(radians)
+            self.velocity.y = math.sin(radians)
+            self.angle = random_angle
 
     def platform_hit(self, platform):
         # Do a more accurate check for collision
@@ -169,4 +196,10 @@ class Ball(pygame.sprite.Sprite):
             # Top or bottom hit
             elif delta_x < delta_y:
                 self.velocity.reflect_ip((self.velocity.x * -1, 0))
+    ## Print the lives on the top left of the screen every frame (10 points)
+    def print_lives(self):
+        text = lives_font.render(f"Remaining Lives: {self.lives}", True, (255, 255, 255))
+        text_rect = text.get_rect(center=(self.surface.get_width() // 9, self.surface.get_height() // 12))
+        self.surface.blit(text, text_rect)
+
 

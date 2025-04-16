@@ -8,11 +8,16 @@ pygame.init()
 screen = pygame.display.set_mode((game_settings.GAME_WIDTH, game_settings.GAME_HEIGHT))
 clock = pygame.time.Clock()
 
+pygame.font.init()
+# Set Text font on screen
+font = pygame.font.SysFont(None, 48)
 running = True
 
 background = pygame.Surface((screen.get_width(), screen.get_height()))
 #background = pygame.image.load()
 background.fill("#353535")
+
+
 
 user_sprite.add(UserPlatform(screen))
 ball_sprites.add(Ball(screen, screen.get_width() / 2, screen.get_height() /2))
@@ -75,6 +80,13 @@ while running:
     user_sprite.draw(screen)
     ball_sprites.draw(screen)
     brick_sprites.draw(screen)
+
+
+    ## Print game over if the game is over (2.5 point)
+    if not ball_sprites:
+        text = font.render("GAME OVER", True, (255, 255, 255))
+        text_rect = text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 1.5))
+        screen.blit(text, text_rect)
 
     # last step of game loop
     pygame.display.flip()
