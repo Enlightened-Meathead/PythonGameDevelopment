@@ -1,0 +1,10 @@
+[project]
+name = "tower-defense"
+version = "0.1"
+description = "A simple tower defense game"
+authors = [
+    {name="Stephen Naragon", email="snaragon@my.wctc.edu"}
+]
+maintainers = [
+    {name="Stephen Naragon", email="snaragon@my.wctc.edu"}
+]
