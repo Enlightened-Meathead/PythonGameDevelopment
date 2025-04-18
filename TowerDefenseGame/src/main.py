@@ -9,6 +9,7 @@ pygame.init()
 screen = pygame.display.set_mode((game_settings.GAME_WIDTH, game_settings.GAME_HEIGHT))
 clock = pygame.time.Clock()
 
+
 # Mouse cursors
 blue_cursor = pygame.image.load('images/cursors/blue-cursor.png')
 red_x_cursor = pygame.image.load('images/cursors/red-x-cursor.png')
@@ -22,7 +23,8 @@ def enemy_hit(enemy, projectile):
             game_settings.player_money += enemy.bounty
             enemy.kill()
         else:
-            enemy.update_color()
+            pass
+        #     enemy.update_color()
         return True
     return False
 
@@ -61,23 +63,35 @@ while running:
     if len(enemies) < game_settings.enemy_wave_size and pygame.time.get_ticks() - game_settings.tick_of_last_enemy_spawn >= 500:
         enemies.add(Enemy(level_one))
 
-    # Updates
-    enemies.update()
-    towers.update()
-    projectiles.update()
-
-    # Check for collisions
-    enemies_hit = pygame.sprite.groupcollide(enemies, projectiles, False, True, enemy_hit)
-
-    #Render the sprite groups
-    enemies.draw(screen)
-    towers.draw(screen)
-    projectiles.draw(screen)
-
     # Game text
     font = pygame.font.Font(pygame.font.get_default_font(), 24)
-    text = pygame.font.Font.render(font,f"${game_settings.player_money}", True, "#FFFFFF")
-    screen.blit(text, (40, game_settings.GAME_HEIGHT - 550))
+    money_text = pygame.font.Font.render(font,f"${game_settings.player_money}", True, "#FFFFFF")
+    ## Print player lives
+    lives_text = pygame.font.Font.render(font,f"Lives: {game_settings.player_lives}", True, "#FFFFFF")
+    screen.blit(money_text, (40, game_settings.GAME_HEIGHT - 550))
+    screen.blit(lives_text, (40, game_settings.GAME_HEIGHT - 520))
+    # Updates
+    ## Check player lives are above zero, otherwise stop rendering new frames and print the game over
+    if game_settings.player_lives > 0:
+        enemies.update()
+        towers.update()
+        projectiles.update()
+
+        # Check for collisions
+        enemies_hit = pygame.sprite.groupcollide(enemies, projectiles, False, True, enemy_hit)
+
+        #Render the sprite groups
+        enemies.draw(screen)
+        towers.draw(screen)
+        projectiles.draw(screen)
+
+    else:
+        ## If player runs out of lives, print game over sign
+        font = pygame.font.Font(pygame.font.get_default_font(), 30)
+        game_over_sign = pygame.font.Font.render(font, f"The Goblins blew up your gold mine!", True, "#FFFFFF")
+        game_over_rect = game_over_sign.get_rect(center = (game_settings.GAME_WIDTH // 2, game_settings.GAME_HEIGHT // 2))
+        screen.blit(game_over_sign, game_over_rect)
+
 
     pygame.display.flip()
     game_settings.dt = clock.tick(game_settings.fps) / 1000
