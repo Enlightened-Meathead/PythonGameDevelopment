@@ -58,7 +58,7 @@ class SpriteSurface():
         return self.get_frame(next_frame)
 
     def run_animation(self, milliseconds, loop = False):
-        if pygame.time.get_ticks() - self.tick_of_last_animation < milliseconds or (not loop and self.num_of_frames == self.current_frame):
+        if pygame.time.get_ticks() - self.tick_of_last_animation < milliseconds or (not loop and self.num_of_frames - 1 == self.current_frame):
             return self.current_frame_image
         else:
             return self.get_next_frame()
