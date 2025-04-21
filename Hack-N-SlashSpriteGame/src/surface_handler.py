@@ -26,9 +26,15 @@ class SpriteSurface():
 
         self.current_frame = 0
         self.current_frame_image = self.get_frame(0) # Subsurface of the current frame
+        self.tick_of_last_animation = 0 # What game tick in ms did the last frame occur
 
     # Return the subsurface of the sprite surface
     def get_frame(self, frame):
+        # If the frame changes, update the tick
+        if frame != self.current_frame:
+            self.tick_of_last_animation = pygame.time.get_ticks()
+            self.current_frame = frame
+
         # Calculate where to start the subsection
         x_start = ((self.current_frame * self.frame_width) + self.x_center_offset) + self.crop_left
         y_start = 0 + self.crop_top
@@ -43,3 +49,19 @@ class SpriteSurface():
         self.current_frame_image = pygame.transform.scale_by(subsurface, self.scale)
 
         return self.current_frame_image
+
+    def get_next_frame(self):
+        next_frame = self.current_frame + 1
+        # Loop back to first frame if the last frame is present
+        if next_frame > self.num_of_frames - 1:
+            next_frame = 0
+        return self.get_frame(next_frame)
+
+    def run_animation(self, milliseconds, loop = False):
+        if pygame.time.get_ticks() - self.tick_of_last_animation < milliseconds or (not loop and self.num_of_frames == self.current_frame):
+            return self.current_frame_image
+        else:
+            return self.get_next_frame()
+
+
+
