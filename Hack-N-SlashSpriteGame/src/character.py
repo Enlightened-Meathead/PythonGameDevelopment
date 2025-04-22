@@ -144,7 +144,6 @@ class User(Character):
 
     def update_user_velocity(self):
         # Zero out the velocity, stops movement if keys arent pressed
-        ## Can add acceleration friction here
         self.velocity = pygame.Vector2(0,0)
 
         if not (self.is_in_action):
@@ -229,6 +228,7 @@ class Monster(Character):
         self.tick_of_last_teleport = 0
 
         self.threat_distance = 100
+        ##
         self.is_idling = False
 
         ## For the duration of an action, use this flag so the score doesnt update every frame
@@ -242,6 +242,7 @@ class Monster(Character):
             self.monster_try_teleport()
 
 
+            ## If idling, have the monsters.succeeded incremented
             if self.is_running:
                 self.image = self.animations["run"].run_animation(80, True)
                 self.is_idling = False

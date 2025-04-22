@@ -51,7 +51,7 @@ while running:
     screen.blit(background_images["bg1"], (0,0))
     ## Check if the monsters have made it to the middle
     if game_settings.monsters_succeeded == game_settings.game_loss_count:
-        ## Print the player won
+        ## Print the player lost
         ## Informative text
         text = font.render(f"Monsters conquered your village...", True, (255, 255, 255))
         text_rect = text.get_rect(center=(screen.get_width() // 2, screen.get_height() // 3))
